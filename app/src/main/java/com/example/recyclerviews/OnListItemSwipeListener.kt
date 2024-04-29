@@ -1,5 +1,7 @@
 package com.example.recyclerviews
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
@@ -9,17 +11,13 @@ interface OnDataChangedListener {
 }
 
 class OnListItemSwipeListener(private val onDataChangedListener: OnDataChangedListener):
-        ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.RIGHT) {
+    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+    private var deleteBackground: ColorDrawable = ColorDrawable(Color.GRAY)
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        val fromPosition = viewHolder.adapterPosition
-        val toPosition = target.adapterPosition
-        onDataChangedListener.onListItemMoved(fromPosition, toPosition)
         return true
     }
 

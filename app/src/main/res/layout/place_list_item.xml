@@ -15,7 +15,7 @@
         android:padding="@dimen/medium_spacing"
         android:textSize="@dimen/large_text_size"
         app:layout_constraintEnd_toStartOf="@+id/map_icon"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/star_check"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Place Name" />
 
@@ -26,25 +26,10 @@
         android:layout_margin="@dimen/small_spacing"
         android:padding="@dimen/medium_spacing"
         android:textSize="@dimen/large_text_size"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/star_check"
         app:layout_constraintTop_toBottomOf="@+id/place_name"
         app:layout_constraintEnd_toStartOf="@+id/map_icon"
         tools:text="Reason" />
-
-    <TextView
-        android:id="@+id/date_place_added"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_spacing"
-        android:padding="@dimen/medium_spacing"
-        android:textSize="@dimen/medium_text_size"
-        android:textAlignment="viewStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/map_icon"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/place_reason"
-        tools:text="Date added" />
 
     <ImageView
         android:id="@+id/map_icon"
@@ -56,5 +41,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/black"
         app:srcCompat="@android:drawable/ic_menu_mapmode" />
+
+    <CheckBox
+        android:id="@+id/star_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_spacing"
+        android:button="@drawable/star_check_icons"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

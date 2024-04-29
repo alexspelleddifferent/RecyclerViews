@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), OnListItemClickedListener, OnDataChang
 
         val places = placesListModel.getPlaces()
 
-        placesRecyclerAdapter = PlaceRecyclerAdapter(places, this)
+        placesRecyclerAdapter = PlaceRecyclerAdapter(listOf(), this)
         placeListRecyclerView.layoutManager = LinearLayoutManager(this)
         placeListRecyclerView.adapter = placesRecyclerAdapter
 
@@ -51,6 +51,17 @@ class MainActivity : AppCompatActivity(), OnListItemClickedListener, OnDataChang
             addNewPlace()
         }
 
+        placesListModel.allPlaces.observe(this) { places ->
+            placesRecyclerAdapter.places = places
+            placesRecyclerAdapter.notifyDataSetChanged()
+        }
+
+        // I decided to use toasts for the user message, seems to be working!
+        placesListModel.userMessage.observe(this) { message ->
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun addNewPlace() {
@@ -62,14 +73,17 @@ class MainActivity : AppCompatActivity(), OnListItemClickedListener, OnDataChang
             Toast.makeText(this, "Enter a place name, and a reason for going", Toast.LENGTH_SHORT).show()
         } else {
             val place = Place(name, reason)
-            val positionAdded = placesListModel.addNewPlace(place)
-            if (positionAdded == -1) {
-                Toast.makeText(this, "You already added that place", Toast.LENGTH_SHORT).show()
-            } else {
-                placesRecyclerAdapter.notifyItemInserted(positionAdded)
-                clearForm()
-                hideKeyboard()
-            }
+            placesListModel.addNewPlace(place)
+            clearForm()
+            hideKeyboard()
+//            val positionAdded = placesListModel.addNewPlace(place)
+//            if (positionAdded == -1) {
+//                Toast.makeText(this, "You already added that place", Toast.LENGTH_SHORT).show()
+//            } else {
+//                placesRecyclerAdapter.notifyItemInserted(positionAdded)
+//                clearForm()
+//                hideKeyboard()
+//            }
         }
     }
 
@@ -85,10 +99,15 @@ class MainActivity : AppCompatActivity(), OnListItemClickedListener, OnDataChang
         }
     }
 
-    override fun onListItemClicked(place: Place) {
+    override fun onMapRequestButtonClicked(place: Place) {
         val placeLocationUri = Uri.parse("geo:0,0?q=${place}")
         val mapIntent = Intent(Intent.ACTION_VIEW, placeLocationUri)
         startActivity(mapIntent)
+    }
+
+    override fun onStarredStatusChanged(place: Place, isStarred: Boolean) {
+        place.starred = isStarred
+        placesListModel.updatePlace(place)
     }
 
     override fun onListItemMoved(from: Int, to: Int) {
@@ -97,14 +116,17 @@ class MainActivity : AppCompatActivity(), OnListItemClickedListener, OnDataChang
     }
 
     override fun onListItemDeleted(position: Int) {
-        val place = placesListModel.deletePlace(position)
-        placesRecyclerAdapter.notifyItemRemoved(position)
-
-        Snackbar.make(findViewById(R.id.container), getString(R.string.place_deleted, place.name), Snackbar.LENGTH_LONG)
-            .setAction(getString(R.string.undo_delete)) {
-                placesListModel.addNewPlace(place, position)
-                placesRecyclerAdapter.notifyItemInserted(position)
-            }
-            .show()
+        val place = placesRecyclerAdapter.places[position]
+        placesListModel.deletePlace(place)
     }
+//        val place = placesListModel.deletePlace(position)
+//        placesRecyclerAdapter.notifyItemRemoved(position)
+//
+//        Snackbar.make(findViewById(R.id.container), getString(R.string.place_deleted, place.name), Snackbar.LENGTH_LONG)
+//            .setAction(getString(R.string.undo_delete)) {
+//                placesListModel.addNewPlace(place)
+//                placesRecyclerAdapter.notifyItemInserted(position)
+//            }
+//            .show()
+//    }
 }

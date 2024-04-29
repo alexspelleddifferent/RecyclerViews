@@ -3,15 +3,17 @@ package com.example.recyclerviews
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
 interface OnListItemClickedListener {
-    fun onListItemClicked(place: Place)
+    fun onMapRequestButtonClicked(place: Place)
+    fun onStarredStatusChanged(place: Place, isStarred: Boolean)
 }
 
-class PlaceRecyclerAdapter(private val places: List<Place>,
+class PlaceRecyclerAdapter(var places: List<Place>,
                            private val onListItemClickedListener: OnListItemClickedListener):
     RecyclerView.Adapter<PlaceRecyclerAdapter.ViewHolder>() {
 
@@ -21,11 +23,17 @@ class PlaceRecyclerAdapter(private val places: List<Place>,
             placeNameText.text = place.name
             val placeReasonText: TextView = view.findViewById(R.id.place_reason)
             placeReasonText.text = place.reason
-            val dateCreatedOnText = view.findViewById<TextView>(R.id.date_place_added)
-            dateCreatedOnText.text = view.context.getString(R.string.created_on, place.formattedDate())
             val mapIcon: ImageView = view.findViewById(R.id.map_icon)
             mapIcon.setOnClickListener {
-                onListItemClickedListener.onListItemClicked(place)
+                onListItemClickedListener.onMapRequestButtonClicked(place)
+            }
+
+            view.findViewById<CheckBox>(R.id.star_check).apply {
+                setOnCheckedChangeListener(null)
+                isChecked = place.starred
+                setOnCheckedChangeListener { checkbox, isChecked ->
+                    onListItemClickedListener.onStarredStatusChanged(place, isChecked)
+                }
             }
         }
     }
